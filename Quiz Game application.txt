@@ -1,0 +1,267 @@
+index.html
+HTML
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz Game</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="quiz-container">
+
+<h1>Quiz Game</h1>
+
+<div id="quiz">
+
+<h2 id="question">Question</h2>
+
+<div id="answer-buttons"></div>
+
+<button id="next-btn">Next</button>
+
+</div>
+
+</div>
+
+<script src="script.js"></script>
+
+</body>
+</html>
+2. style.css
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial,sans-serif;
+}
+
+body{
+background:#1e3c72;
+background:linear-gradient(135deg,#1e3c72,#2a5298);
+display:flex;
+justify-content:center;
+align-items:center;
+height:100vh;
+}
+
+.quiz-container{
+background:#fff;
+width:90%;
+max-width:500px;
+padding:25px;
+border-radius:10px;
+box-shadow:0 5px 15px rgba(0,0,0,0.3);
+}
+
+h1{
+text-align:center;
+margin-bottom:20px;
+}
+
+#question{
+margin-bottom:20px;
+}
+
+.btn{
+display:block;
+width:100%;
+padding:12px;
+margin:10px 0;
+border:none;
+border-radius:5px;
+background:#f1f1f1;
+cursor:pointer;
+font-size:16px;
+transition:0.3s;
+}
+
+.btn:hover{
+background:#007bff;
+color:white;
+}
+
+.correct{
+background:green !important;
+color:white;
+}
+
+.wrong{
+background:red !important;
+color:white;
+}
+
+#next-btn{
+display:none;
+width:100%;
+padding:12px;
+margin-top:20px;
+background:#007bff;
+color:white;
+border:none;
+border-radius:5px;
+cursor:pointer;
+font-size:18px;
+}
+3. script.js
+const questions = [
+{
+question:"What does HTML stand for?",
+answers:[
+{text:"Hyper Text Markup Language",correct:true},
+{text:"Home Tool Markup Language",correct:false},
+{text:"Hyperlinks and Text Markup Language",correct:false},
+{text:"High Text Machine Language",correct:false}
+]
+},
+{
+question:"Which language is used for styling web pages?",
+answers:[
+{text:"CSS",correct:true},
+{text:"HTML",correct:false},
+{text:"Java",correct:false},
+{text:"Python",correct:false}
+]
+},
+{
+question:"Which language makes a website interactive?",
+answers:[
+{text:"JavaScript",correct:true},
+{text:"HTML",correct:false},
+{text:"CSS",correct:false},
+{text:"SQL",correct:false}
+]
+},
+{
+question:"Which tag is used to insert an image?",
+answers:[
+{text:"<img>",correct:true},
+{text:"<image>",correct:false},
+{text:"<pic>",correct:false},
+{text:"<src>",correct:false}
+]
+},
+{
+question:"Which company developed Java?",
+answers:[
+{text:"Sun Microsystems",correct:true},
+{text:"Google",correct:false},
+{text:"Microsoft",correct:false},
+{text:"Apple",correct:false}
+]
+}
+];
+
+const question=document.getElementById("question");
+const answerButtons=document.getElementById("answer-buttons");
+const nextBtn=document.getElementById("next-btn");
+
+let currentQuestion=0;
+let score=0;
+
+function startQuiz(){
+currentQuestion=0;
+score=0;
+nextBtn.innerHTML="Next";
+showQuestion();
+}
+
+function showQuestion(){
+
+resetState();
+
+let q=questions[currentQuestion];
+
+question.innerHTML=(currentQuestion+1)+". "+q.question;
+
+q.answers.forEach(answer=>{
+
+const button=document.createElement("button");
+
+button.innerHTML=answer.text;
+
+button.classList.add("btn");
+
+answerButtons.appendChild(button);
+
+if(answer.correct){
+button.dataset.correct="true";
+}
+
+button.addEventListener("click",selectAnswer);
+
+});
+
+}
+
+function resetState(){
+
+nextBtn.style.display="none";
+
+while(answerButtons.firstChild){
+answerButtons.removeChild(answerButtons.firstChild);
+}
+
+}
+
+function selectAnswer(e){
+
+const selected=e.target;
+
+const correct=selected.dataset.correct==="true";
+
+if(correct){
+selected.classList.add("correct");
+score++;
+}else{
+selected.classList.add("wrong");
+}
+
+Array.from(answerButtons.children).forEach(button=>{
+
+if(button.dataset.correct==="true"){
+button.classList.add("correct");
+}
+
+button.disabled=true;
+
+});
+
+nextBtn.style.display="block";
+
+}
+
+function showScore(){
+
+resetState();
+
+question.innerHTML="🎉 Your Score: "+score+" / "+questions.length;
+
+nextBtn.innerHTML="Play Again";
+
+nextBtn.style.display="block";
+
+}
+
+nextBtn.addEventListener("click",()=>{
+
+currentQuestion++;
+
+if(currentQuestion<questions.length){
+showQuestion();
+}else{
+showScore();
+currentQuestion=-1;
+}
+
+if(currentQuestion==-1){
+nextBtn.onclick=function(){
+startQuiz();
+};
+}
+
+});
+
+startQuiz();
